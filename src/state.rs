@@ -220,7 +220,7 @@ fn generate_gradients<'a>(
 
     // test if they're the same length
     assert!(
-        x_counter != y_counter,
+        x_counter == y_counter,
         "The number of samples do not equal the number of scores!"
     );
 
