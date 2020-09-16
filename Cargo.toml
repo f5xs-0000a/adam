@@ -4,5 +4,8 @@ version = "0.1.0"
 authors = ["f5xs"]
 edition = "2018"
 
+[features]
+FLOAT32 = []
+
 [dependencies]
 thiserror = "1.0"
