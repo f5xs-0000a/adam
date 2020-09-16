@@ -1,0 +1,8 @@
+[package]
+name = "adam"
+version = "0.1.0"
+authors = ["f5xs"]
+edition = "2018"
+
+[dependencies]
+thiserror = "1.0"
