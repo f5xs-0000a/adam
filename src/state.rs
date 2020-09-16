@@ -96,9 +96,19 @@ impl AdamState {
             scores.iter().cloned(),
         );
 
-        update_biased_moment_estimate(&mut self.m, &gradients, params.beta_1);
+        update_biased_moment_estimate(
+            &mut self.m,
+            &gradients,
+            params.beta_1,
+            true,
+        );
 
-        update_biased_moment_estimate(&mut self.v, &gradients, params.beta_2);
+        update_biased_moment_estimate(
+            &mut self.v,
+            &gradients,
+            params.beta_2,
+            false,
+        );
 
         let m_hat =
             get_bias_corrected_moment_estimate(&self.m, params.beta_1, self.t);
@@ -173,10 +183,16 @@ fn update_biased_moment_estimate(
     me: &mut [FLOAT],
     gradient: &[FLOAT],
     beta: FLOAT,
+    is_mean: bool
 )
 {
+    let power = match is_mean {
+        true => 1,
+        false => 2,
+    };
+
     for (me_val, g_val) in me.iter_mut().zip(gradient.iter()) {
-        *me_val = beta * *me_val + (1. - beta) * *g_val
+        *me_val = beta * *me_val + (1. - beta) * g_val.powi(power)
     }
 }
 
