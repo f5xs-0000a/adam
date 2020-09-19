@@ -1,8 +1,10 @@
 mod params;
 mod state;
+mod driver;
 
 pub use params::AdamParams;
 pub use state::AdamState;
+pub use driver::AdamDriver;
 
 #[cfg(feature = "FLOAT32")]
 type FLOAT = f32;

@@ -9,3 +9,6 @@ FLOAT32 = []
 
 [dependencies]
 thiserror = "1.0"
+rand = "*"
+rand_distr = "*"
+itertools = "*"
