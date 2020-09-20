@@ -8,7 +8,7 @@ use itertools::Itertools as _;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AdamDriver {
     starting_population_size: usize,
     sustain_population_size: usize,

@@ -6,7 +6,7 @@ use thiserror::Error;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AdamState {
     m: Vec<FLOAT>, // has a length of d
     v: Vec<FLOAT>, // has a length of d

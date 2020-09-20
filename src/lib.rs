@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate serde;
+
 mod params;
 mod state;
 mod driver;
