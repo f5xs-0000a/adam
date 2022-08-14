@@ -5,13 +5,14 @@ use crate::FLOAT;
 use crate::AdamState;
 use crate::AdamParams;
 use itertools::Itertools as _;
+use crate::state::ParamCountError;
 
 ////////////////////////////////////////////////////////////////////////////////
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AdamDriver {
-    starting_population_size: usize,
-    sustain_population_size: usize,
+    pub starting_population_size: usize,
+    pub sustain_population_size: usize,
 
     vectors: Vec<Vec<FLOAT>>,
 }
@@ -48,6 +49,24 @@ impl AdamDriver {
         self.vectors.iter_mut().map(|v| &mut **v).collect::<Vec<_>>()
     }
 
+    pub fn add_vectors(
+        &mut self,
+        vecs: impl Iterator<Item = Vec<FLOAT>>,
+    ) -> Result<(), ParamCountError> {
+        // check if the vectors have the same length as the base
+        let base_len = self.vectors.first().unwrap().len();
+
+        for vec in vecs {
+            if vec.len() != base_len {
+                Err(ParamCountError)?;
+            }
+
+            self.vectors.push(vec);
+        }
+
+        Ok(())
+    }
+
     pub fn resample_vectors<R>(
         &mut self,
         state: &AdamState,
@@ -62,9 +81,6 @@ impl AdamDriver {
         for s in stdev.iter_mut() {
             *s = (*s * params.alpha).sqrt();
         }
-
-        println!("M:\t{:+.04} {:+.04}", mean[0], mean[1]);
-        println!("S:\t{:+.04} {:+.04}", stdev[0], stdev[1]);
 
         self.vectors = vec![mean.clone()];
         self.vectors.reserve(count - 1);

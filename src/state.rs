@@ -59,6 +59,10 @@ impl AdamState {
         self.t
     }
 
+    pub fn t_mut(&mut self) -> &mut i32 {
+        &mut self.t
+    }
+
     pub fn m_hat(&self, params: &AdamParams) -> Vec<FLOAT> {
         get_bias_corrected_moment_estimate(&self.m, params.beta_1, self.t)
     }
@@ -73,6 +77,9 @@ impl AdamState {
         params: &AdamParams,
     ) -> Result<(), ParamCountError>
     {
+        let cur_m_hat = self.m_hat(params);
+        let cur_v_hat = self.v_hat(params);
+
         if gradient.len() != self.m.len() {
             Err(ParamCountError)?;
         }
@@ -102,8 +109,26 @@ impl AdamState {
             *param -= params.alpha * *mean / (var.sqrt() + params.epsilon);
         }
 
+        let area_diff = dbg_area_log(&v_hat) - dbg_area_log(&cur_v_hat);
+        let distance = dbg_euclidian_distance(&m_hat, &cur_m_hat);
+
+        dbg!(area_diff, distance);
+
         Ok(())
     }
+}
+
+fn dbg_euclidian_distance(a: &[FLOAT], b: &[FLOAT]) -> FLOAT {
+    a.iter()
+        .zip(b.iter())
+        .map(|(a, b)| *a - *b)
+        .map(|x| x.powi(2))
+        .sum::<FLOAT>()
+        .sqrt()
+}
+
+fn dbg_area_log(x: &[FLOAT]) -> FLOAT {
+    x.iter().map(|x| x.ln()).sum::<FLOAT>()
 }
 
 fn get_bias_corrected_moment_estimate(
